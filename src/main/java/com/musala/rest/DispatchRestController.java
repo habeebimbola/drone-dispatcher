@@ -4,6 +4,8 @@ import com.musala.domain.dto.DroneDto;
 import com.musala.domain.dto.MedicationDto;
 import com.musala.service.DroneDispatchService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,8 @@ import java.util.List;
 
 @RestController
 public class DispatchRestController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DispatchRestController.class);
 
     private final DroneDispatchService droneDispatchService;
 
@@ -32,7 +36,16 @@ public class DispatchRestController {
     @PostMapping("/register")
     public ResponseEntity<DroneDto> registerDrone(@Valid() @RequestBody() DroneDto droneDto, BindingResult bindingResult)
     {
-        ResponseEntity<DroneDto> responseEntity = new ResponseEntity<>(HttpStatus.CREATED);
+        LOGGER.info("Invoking /register Handler "+droneDto.toString());
+
+        if(bindingResult.hasErrors())
+        {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        DroneDto createdDrone = this.droneDispatchService.registerDrone(droneDto);
+        ResponseEntity<DroneDto> responseEntity = new ResponseEntity<>(createdDrone, HttpStatus.CREATED);
+
         return responseEntity;
     }
 

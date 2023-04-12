@@ -1,3 +1,10 @@
 package com.musala.domain;
 
-public enum DroneState {IDLE, LOADING, LOADED, DELIVERING, DELIVERED}
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+
+@JsonFormat(shape = JsonFormat.Shape.STRING)
+public enum DroneState {
+    IDLE, LOADING, LOADED, DELIVERING, DELIVERED;
+
+}

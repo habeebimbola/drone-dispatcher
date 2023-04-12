@@ -29,6 +29,7 @@ public class DroneDispatchServiceImp implements DroneDispatchService{
         drone.setDroneState(DroneState.IDLE);
         drone.setBatteryCapacity(droneDto.getBatteryCapacity());
         drone.setSerialNo(droneDto.getSerialNo());
+        drone.setWeightLimit(droneDto.getWeightLimit());
 
         Drone savedDrone = (Drone)droneRepository.save(drone);
 
