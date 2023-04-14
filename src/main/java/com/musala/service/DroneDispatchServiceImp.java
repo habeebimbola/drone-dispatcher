@@ -9,6 +9,7 @@ import com.musala.repo.MedicationRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service("droneDispatchServiceImpl")
@@ -24,17 +25,24 @@ public class DroneDispatchServiceImp implements DroneDispatchService{
 
     public DroneDto registerDrone(DroneDto droneDto)
     {
-        Drone drone = new Drone();
-        drone.setDroneModel(droneDto.getDroneModel());
-        drone.setDroneState(DroneState.IDLE);
-        drone.setBatteryCapacity(droneDto.getBatteryCapacity());
-        drone.setSerialNo(droneDto.getSerialNo());
-        drone.setWeightLimit(droneDto.getWeightLimit());
+        Drone newDrone = new Drone();
+        newDrone.setDroneModel(droneDto.getDroneModel());
+        newDrone.setDroneState(DroneState.IDLE);
+        newDrone.setBatteryCapacity(droneDto.getBatteryCapacity());
+        newDrone.setSerialNo(droneDto.getSerialNo());
+        newDrone.setWeightLimit(droneDto.getWeightLimit());
 
-        Drone savedDrone = (Drone)droneRepository.save(drone);
+        if(droneExists(droneDto.getSerialNo()))
+        {
+            throw new RuntimeException("Drone Already Registered..");
+        }
 
-        if (savedDrone.getId() == null)
-            throw new RuntimeException("Couldn't persist new Drone");
+        Drone savedDrone = (Drone) droneRepository.save(newDrone);
+        Optional.ofNullable(savedDrone).orElseThrow( ( ) -> new RuntimeException("Couldn't persist new Drone"));
+        droneDto.setId(savedDrone.getId());
+
+//        if (savedDrone savedDrone.getId() == null)
+//            throw new RuntimeException("Couldn't persist new Drone");
 
         return  droneDto;
 
@@ -70,5 +78,12 @@ public class DroneDispatchServiceImp implements DroneDispatchService{
 
         return batteryCapacity;
 
+    }
+
+    public boolean droneExists(String serialNo){
+
+        Optional<Drone> droneOptional = this.droneRepository.findBySerialNo(serialNo);
+
+        return droneOptional.isPresent()? true : false;
     }
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("drone-dispatch-service")
 public class DispatchRestController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DispatchRestController.class);
@@ -49,20 +50,20 @@ public class DispatchRestController {
         return responseEntity;
     }
 
-    @PostMapping("/loadDrone/{droneId}")
-    public ResponseEntity<DroneDto> loadDroneMedications( @PathVariable("droneId") Integer droneId ,  @RequestBody() List<MedicationDto> medicationDtos)
+    @PostMapping("/drone/load/{serialNo}")
+    public ResponseEntity<DroneDto> loadDroneMedications( @PathVariable("serialNo") String serialNo ,  @RequestBody() List<MedicationDto> medicationDtos)
     {
         ResponseEntity<DroneDto> dtoResponseEntity = new ResponseEntity(HttpStatus.ACCEPTED);
         return dtoResponseEntity;
     }
 
-    @GetMapping("/loadedMedications/{droneId}")
-    public ResponseEntity<List<DroneDto>> getLoadedMedications(@PathVariable("droneId") Integer droneId){
+    @GetMapping("/drone/medications/{serialNo}")
+    public ResponseEntity<List<DroneDto>> getLoadedMedications(@PathVariable("serialNo") String serialNo){
         ResponseEntity<List<DroneDto>> responseEntity = new ResponseEntity(HttpStatus.OK);
         return responseEntity;
     }
 
-    @GetMapping("/availableDrones")
+    @GetMapping("/drone/available")
     public ResponseEntity<List<DroneDto>> availableDronesForLoading(){
         ResponseEntity<List<DroneDto>> availableDrones = new ResponseEntity(HttpStatus.OK);
         return availableDrones;

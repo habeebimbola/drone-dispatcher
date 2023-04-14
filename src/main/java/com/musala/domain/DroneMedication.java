@@ -1,8 +1,6 @@
 package com.musala.domain;
 
 import jakarta.persistence.*;
-import jdk.jfr.Timestamp;
-
 import java.time.LocalDateTime;
 
 @Entity(name="DroneMedication")
@@ -13,7 +11,7 @@ public class DroneMedication {
     private DroneMedicationId droneMedicationId;
 
     @Temporal(value = TemporalType.TIMESTAMP)
-    @Column(name = "CREATION_DATE")
+    @Column(name = "CREATION_DATE", insertable = true)
     private LocalDateTime creationDate;
 
     @MapsId("droneId")
@@ -38,5 +36,32 @@ public class DroneMedication {
 
     public void setDroneMedicationId(DroneMedicationId droneMedicationId) {
         this.droneMedicationId = droneMedicationId;
+    }
+
+    public Drone getDrone() {
+        return drone;
+    }
+
+    public void setDrone(Drone drone) {
+        this.drone = drone;
+    }
+
+    public Medication getMedication() {
+        return medication;
+    }
+
+    public void setMedication(Medication medication) {
+        this.medication = medication;
+    }
+
+    @PrePersist
+    void onCreation()
+    {
+        setCreationDate(LocalDateTime.now());
+    }
+
+    @PreUpdate
+    void onUpdate(){
+        setCreationDate(LocalDateTime.now());
     }
 }
