@@ -74,9 +74,14 @@ public class DroneDispatchServiceImp implements DroneDispatchService{
 
     public Double getDroneBatteryLevel(String serialNo){
 
-        Double batteryCapacity = this.droneRepository.findBySerialNo(serialNo).get().getBatteryCapacity();
+       Optional<Drone> droneOptional = this.droneRepository.findBySerialNo(serialNo);
 
-        return batteryCapacity;
+       if(droneOptional.isPresent())
+       {
+          return droneOptional.get().getBatteryCapacity();
+       }
+
+        return 0D;
 
     }
 

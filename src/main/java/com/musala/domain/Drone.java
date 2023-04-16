@@ -21,7 +21,7 @@ public class Drone implements Serializable {
     private String serialNo;
 
     @Column(name = "MODEL", nullable = false )
-    @Enumerated()
+    @Enumerated( value = EnumType.STRING)
     private DroneModel droneModel;
 
     @Column(name = "WEIGHT_LIMIT", nullable = false)
