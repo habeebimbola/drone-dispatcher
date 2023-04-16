@@ -27,7 +27,7 @@ public class DispatchRestController {
     }
 
     @GetMapping("/drone/{droneId}")
-    public ResponseEntity< DroneDto> getDrone(@PathVariable("droneId") Integer droneId)
+    public ResponseEntity<DroneDto> getDrone(@PathVariable("droneId") Integer droneId)
     {
         DroneDto droneDto = new DroneDto();
         ResponseEntity<DroneDto> responseEntity = new ResponseEntity<>( droneDto, HttpStatus.FOUND);
@@ -65,14 +65,16 @@ public class DispatchRestController {
 
     @GetMapping("/drone/available")
     public ResponseEntity<List<DroneDto>> availableDronesForLoading(){
-        ResponseEntity<List<DroneDto>> availableDrones = new ResponseEntity(HttpStatus.OK);
+        List<DroneDto> availableForLoading = this.droneDispatchService.getDronesAvailableForLoading();
+        ResponseEntity<List<DroneDto>> availableDrones = new ResponseEntity(availableForLoading, HttpStatus.OK);
         return availableDrones;
     }
 
-    @GetMapping("/batteryLevel/{droneId}")
-    public ResponseEntity<DroneDto> getBatteryLevel(@PathVariable("droneId") String droneId)
+    @GetMapping("/{serialNo}/battery-level")
+    public ResponseEntity<Double> getBatteryLevel(@PathVariable("serialNo") String serialNo)
     {
-        ResponseEntity<DroneDto> responseEntity = new ResponseEntity<>(HttpStatus.OK);
+        Double batteryLevel = this.droneDispatchService.getDroneBatteryLevel(serialNo);
+        ResponseEntity<Double> responseEntity = new ResponseEntity(batteryLevel, HttpStatus.OK);
         return responseEntity;
     }
 
