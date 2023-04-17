@@ -32,7 +32,7 @@ public class Drone implements Serializable {
     private Double batteryCapacity;
 
     @Column(name = "STATE")
-    @Enumerated(value = EnumType.STRING)
+    @Enumerated(value = EnumType.ORDINAL)
     private DroneState droneState;
 
     @OneToMany(mappedBy = "drone" , fetch = FetchType.LAZY, cascade = CascadeType.ALL)

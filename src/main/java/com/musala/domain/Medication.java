@@ -13,10 +13,10 @@ public class Medication implements Serializable {
 
     @Id
     @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
     @Column(name = "NAME", nullable = false)
-
     private String name;
 
     @Column(name = "WEIGHT")

@@ -3,12 +3,14 @@ package com.musala;
 import com.musala.domain.DroneModel;
 import com.musala.domain.DroneState;
 import com.musala.domain.dto.DroneDto;
+import com.musala.rest.DispatchRestController;
 import com.musala.service.DroneDispatchService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,6 +26,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
+//@WebMvcTest
+//@MockBean(DispatchRestController.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 class MusalaTaskApplicationTests {
@@ -39,7 +43,6 @@ class MusalaTaskApplicationTests {
 	public void registerDroneTest() throws Exception {
 
 		String newDrone = "{\"serialNo\":\"DRNMUS101A\",\"droneModel\":\"LightWeight\", \"droneState\":\"IDLE\", \"weightLimit\":500, \"batteryCapacity\":10 }";
-
 
 		DroneDto droneDto = this.createDrone();
 		when(this.droneDispatchService.registerDrone(droneDto)).thenReturn(droneDto);

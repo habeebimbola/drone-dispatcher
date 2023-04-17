@@ -1,17 +1,20 @@
 package com.musala.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.musala.domain.Drone;
 import com.musala.domain.DroneModel;
 import com.musala.domain.DroneState;
-import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 @JsonSerialize
 public class DroneDto extends Drone {
+
+    @JsonIgnore
+    private Integer id;
 
     @Size(max = 100, message = "Invalid Serial Number Length. Must Be Less Than 100", min = 10)
     @JsonProperty("serialNo")
