@@ -21,4 +21,6 @@ public interface DroneDispatchService {
 
 
    public abstract Optional<Drone> getDrone(String serialNo);
+
+    MedicationDto createMedication(MedicationDto medicationDto);
 }

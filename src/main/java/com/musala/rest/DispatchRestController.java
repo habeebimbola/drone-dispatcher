@@ -1,7 +1,6 @@
 package com.musala.rest;
 
 import com.musala.domain.Drone;
-import com.musala.domain.Medication;
 import com.musala.domain.dto.DroneDto;
 import com.musala.domain.dto.MedicationDto;
 import com.musala.service.DroneDispatchService;
@@ -54,9 +53,13 @@ public class DispatchRestController {
     }
 
     @PostMapping("/drone/load/{serialNo}")
-    public ResponseEntity<?> loadDroneMedications( @PathVariable("serialNo") String serialNo ,  @RequestBody() List<MedicationDto> medicationDtos)
+    public ResponseEntity<?> loadDroneWithMedications(@PathVariable("serialNo") String serialNo , @RequestBody() List<MedicationDto> medicationDtos)
     {
         Optional<Drone> droneOptional = this.droneDispatchService.getDrone(serialNo);
+        if (!droneOptional.isPresent())
+        {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
         this.droneDispatchService.setDroneMedications(medicationDtos, serialNo);
 

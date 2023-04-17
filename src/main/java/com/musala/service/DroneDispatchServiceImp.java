@@ -119,6 +119,19 @@ public class DroneDispatchServiceImp implements DroneDispatchService{
         return this.droneRepository.findBySerialNo(serialNo);
     }
 
+    @Override
+    public MedicationDto createMedication(MedicationDto medicationDto) {
+        Medication newMedication = new Medication();
+        newMedication.setWeight(medicationDto.getWeight());
+        newMedication.setName(medicationDto.getName());
+        newMedication.setCode(medicationDto.getCode());
+
+        Medication savedMedication = this.medicationRepository.save(newMedication);
+        Optional.ofNullable(savedMedication).orElseThrow(()->new RuntimeException("Could Not Create A New Medication"));
+
+        return medicationDto;
+    }
+
     public boolean droneExists(String serialNo){
 
         Optional<Drone> droneOptional = this.droneRepository.findBySerialNo(serialNo);
