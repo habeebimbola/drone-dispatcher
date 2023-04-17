@@ -6,6 +6,7 @@ import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity(name = "Drone")
 @Table(name = "DRONE")
@@ -92,5 +93,25 @@ public class Drone implements Serializable {
 
     public void setMedications(List<DroneMedication> medications) {
         this.droneMedications = medications;
+    }
+
+    public void addMedication(Medication medication){
+        DroneMedication droneMedication = new DroneMedication();
+        droneMedication.setDrone(this);
+        droneMedication.setMedication(medication);
+        medication.getDroneMedications().add(droneMedication);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Drone)) return false;
+        Drone drone = (Drone) o;
+        return id.equals(drone.id) && serialNo.equals(drone.serialNo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, serialNo);
     }
 }

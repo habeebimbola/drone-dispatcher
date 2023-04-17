@@ -101,7 +101,7 @@ class MusalaTaskApplicationTests {
 
 		when(this.droneDispatchService.getDroneBatteryLevel("DRNMUS101A")).thenReturn(300d);
 
-		this.mockMvc.perform(get("/drone-dispatch-service/DRNMUS101A/battery-level").
+		this.mockMvc.perform(get("/drone-dispatch-service/drone/DRNMUS101A/battery-level").
 				accept(APPLICATION_JSON).
 				contentType(APPLICATION_JSON))
 				.andExpect(status().isOk());

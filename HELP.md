@@ -25,3 +25,22 @@ These additional references should also help you:
 
 * [Gradle Build Scans – insights for your project's build](https://scans.gradle.com#gradle)
 
+From Project Base Directory:
+ run ./gradlew clean
+     ./gradlew bootRun to run project without Deployment
+     ./gradlew build to build executable JAR file
+
+From Project Base Directory, cd build/libs directory: {project-name}.jar file is here
+run java -jar {project-name}.jar to run as executable 
+
+Server Running At URL : http://localhost:8000
+
+Check localhost:8000/h2-console from Browser Window to view in-memory Database table.
+
+Drone Dispatch Service API Endpoints For Musala Task
+
+drone-dispatch-service/register
+drone-dispatch-service/drone/load/{serialNo}
+drone-dispatch-service/drone/medications/{serialNo}
+drone-dispatch-service/drone/available
+drone-dispatch-service/drone/{serialNo}/battery-level

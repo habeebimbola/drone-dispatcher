@@ -2,12 +2,14 @@ package com.musala.service;
 
 import com.musala.domain.Drone;
 import com.musala.domain.DroneState;
+import com.musala.domain.Medication;
 import com.musala.domain.dto.DroneDto;
 import com.musala.domain.dto.MedicationDto;
 import com.musala.repo.DroneRepository;
 import com.musala.repo.MedicationRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,22 +43,46 @@ public class DroneDispatchServiceImp implements DroneDispatchService{
         Optional.ofNullable(savedDrone).orElseThrow( ( ) -> new RuntimeException("Couldn't persist new Drone"));
         droneDto.setId(savedDrone.getId());
 
-//        if (savedDrone savedDrone.getId() == null)
-//            throw new RuntimeException("Couldn't persist new Drone");
-
         return  droneDto;
 
     }
 
-    public void setDroneMedications(List<MedicationDto> medications, Integer droneId)
+    public void setDroneMedications(List<MedicationDto> medications, String serialNo)
     {
-//        this.droneRepository.findById(droneId).orElseThrow(()-> new RuntimeException("Supplied Drone ID doesn't exist")).setMedications(medications);
+        Optional<Drone> droneOptional = this.getDrone(serialNo);
+        Drone drone = droneOptional.isPresent()? droneOptional.get() : droneOptional.orElseThrow(() -> new RuntimeException("Drone Specified Not Found"));
+
+        List<Medication> medicationList = medications.stream().map((medicationDto) -> {
+            Medication medication = new Medication();
+            medication.setCode(medicationDto.getCode());
+            medication.setName(medicationDto.getName());
+            medication.setWeight(medicationDto.getWeight());
+            return medication;
+        }).collect(Collectors.toList());
+
+        medicationList.stream().forEach((medication -> { drone.addMedication(medication);}));
+        this.droneRepository.save(drone);
+
     }
 
-    public List<MedicationDto> getLoadedDroneMedications(Integer droneId)
+    public List<MedicationDto> getLoadedDroneMedications(String serialNo)
     {
-//        this.droneRepository.findById(droneId).orElseGet(()-> new DroneDto()).getMedications().stream().map((medication -> { medication.getCode() }));
-        return null;
+
+       if (!this.getDrone(serialNo).isPresent())
+        {
+            return new ArrayList<MedicationDto>();
+        }
+
+      List<MedicationDto> medicationDtos =  this.getDrone(serialNo).get().getMedications().stream().map((droneMedication)->{
+            MedicationDto medicationDto = new MedicationDto();
+            Medication medication = droneMedication.getMedication();
+            medicationDto.setCode(medication.getCode());
+            medicationDto.setName(medication.getName());
+            medicationDto.setWeight(medication.getWeight());
+            return medicationDto;
+        }).collect(Collectors.toList());
+      return medicationDtos;
+
     }
 
     public List<DroneDto> getDronesAvailableForLoading()
@@ -77,7 +103,7 @@ public class DroneDispatchServiceImp implements DroneDispatchService{
 
     public Double getDroneBatteryLevel(String serialNo){
 
-       Optional<Drone> droneOptional = this.droneRepository.findBySerialNo(serialNo);
+       Optional<Drone> droneOptional = this.getDrone(serialNo);
 
        if(droneOptional.isPresent())
        {
@@ -86,6 +112,11 @@ public class DroneDispatchServiceImp implements DroneDispatchService{
 
         return 0D;
 
+    }
+
+    @Override
+    public Optional<Drone> getDrone(String serialNo) {
+        return this.droneRepository.findBySerialNo(serialNo);
     }
 
     public boolean droneExists(String serialNo){

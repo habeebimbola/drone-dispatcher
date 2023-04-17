@@ -1,5 +1,7 @@
 package com.musala.rest;
 
+import com.musala.domain.Drone;
+import com.musala.domain.Medication;
 import com.musala.domain.dto.DroneDto;
 import com.musala.domain.dto.MedicationDto;
 import com.musala.service.DroneDispatchService;
@@ -13,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("drone-dispatch-service")
@@ -51,15 +54,22 @@ public class DispatchRestController {
     }
 
     @PostMapping("/drone/load/{serialNo}")
-    public ResponseEntity<DroneDto> loadDroneMedications( @PathVariable("serialNo") String serialNo ,  @RequestBody() List<MedicationDto> medicationDtos)
+    public ResponseEntity<?> loadDroneMedications( @PathVariable("serialNo") String serialNo ,  @RequestBody() List<MedicationDto> medicationDtos)
     {
-        ResponseEntity<DroneDto> dtoResponseEntity = new ResponseEntity(HttpStatus.ACCEPTED);
+        Optional<Drone> droneOptional = this.droneDispatchService.getDrone(serialNo);
+
+        this.droneDispatchService.setDroneMedications(medicationDtos, serialNo);
+
+        ResponseEntity<?> dtoResponseEntity = new ResponseEntity(HttpStatus.ACCEPTED);
         return dtoResponseEntity;
     }
 
     @GetMapping("/drone/medications/{serialNo}")
-    public ResponseEntity<List<DroneDto>> getLoadedMedications(@PathVariable("serialNo") String serialNo){
-        ResponseEntity<List<DroneDto>> responseEntity = new ResponseEntity(HttpStatus.OK);
+    public ResponseEntity<List<MedicationDto>> getLoadedMedications(@PathVariable("serialNo") String serialNo){
+
+        List<MedicationDto> medicationDtoList = this.droneDispatchService.getLoadedDroneMedications(serialNo);
+
+        ResponseEntity<List<MedicationDto>> responseEntity = new ResponseEntity( medicationDtoList,HttpStatus.OK);
         return responseEntity;
     }
 
@@ -70,7 +80,7 @@ public class DispatchRestController {
         return availableDrones;
     }
 
-    @GetMapping("/{serialNo}/battery-level")
+    @GetMapping("/drone/{serialNo}/battery-level")
     public ResponseEntity<Double> getBatteryLevel(@PathVariable("serialNo") String serialNo)
     {
         Double batteryLevel = this.droneDispatchService.getDroneBatteryLevel(serialNo);

@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity(name = "Medication")
 @Table(name = "MEDICATION")
@@ -77,5 +78,18 @@ public class Medication implements Serializable {
 
     public void setDroneMedications(List<DroneMedication> droneMedications) {
         this.droneMedications = droneMedications;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Medication)) return false;
+        Medication that = (Medication) o;
+        return id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
