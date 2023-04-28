@@ -1,8 +1,8 @@
 package com.musala.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +12,10 @@ import java.util.Objects;
 @Table(name = "MEDICATION")
 public class Medication implements Serializable {
 
+    @JsonIgnore
     @Id
     @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "NAME", nullable = false)
@@ -26,11 +27,12 @@ public class Medication implements Serializable {
     @Column(name = "CODE")
     private String code;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "medication", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DroneMedication> droneMedications = new ArrayList<>();
 
-    @Transient
-    private InputStream imageStream;
+    @Column(name = "IMAGE_URL")
+    private String imageURL;
 
     public Integer getId() {
         return id;
@@ -64,12 +66,12 @@ public class Medication implements Serializable {
         this.code = code;
     }
 
-    public InputStream getImageStream() {
-        return imageStream;
+    public String getImageURL() {
+        return imageURL;
     }
 
-    public void setImageStream(InputStream imageStream) {
-        this.imageStream = imageStream;
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
     }
 
     public List<DroneMedication> getDroneMedications() {

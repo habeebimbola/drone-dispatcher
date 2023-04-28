@@ -14,7 +14,7 @@ public class Drone implements Serializable {
 
     @Id
     @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "SERIAL_NO", nullable = false)
@@ -96,9 +96,8 @@ public class Drone implements Serializable {
     }
 
     public void addMedication(Medication medication){
-        DroneMedication droneMedication = new DroneMedication();
-        droneMedication.setDrone(this);
-        droneMedication.setMedication(medication);
+        DroneMedication droneMedication = new DroneMedication(this, medication);
+        droneMedications.add(droneMedication);
         medication.getDroneMedications().add(droneMedication);
     }
 
@@ -107,11 +106,11 @@ public class Drone implements Serializable {
         if (this == o) return true;
         if (!(o instanceof Drone)) return false;
         Drone drone = (Drone) o;
-        return id.equals(drone.id) && serialNo.equals(drone.serialNo);
+        return id.equals(drone.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, serialNo);
+        return Objects.hash(id);
     }
 }

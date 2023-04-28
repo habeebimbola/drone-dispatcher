@@ -3,22 +3,20 @@ package com.musala;
 import com.musala.domain.DroneModel;
 import com.musala.domain.DroneState;
 import com.musala.domain.dto.DroneDto;
-import com.musala.rest.DispatchRestController;
+import com.musala.domain.dto.MedicationDto;
 import com.musala.service.DroneDispatchService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -30,7 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 //@MockBean(DispatchRestController.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-class MusalaTaskApplicationTests {
+class DroneDispatcherApplicationTests {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -44,7 +42,7 @@ class MusalaTaskApplicationTests {
 
 		String newDrone = "{\"serialNo\":\"DRNMUS101A\",\"droneModel\":\"LightWeight\", \"droneState\":\"IDLE\", \"weightLimit\":500, \"batteryCapacity\":10 }";
 
-		DroneDto droneDto = this.createDrone();
+		DroneDto droneDto = createDrone();
 		when(this.droneDispatchService.registerDrone(droneDto)).thenReturn(droneDto);
 
 		this.mockMvc.perform(post("/drone-dispatch-service/register").
@@ -55,10 +53,21 @@ class MusalaTaskApplicationTests {
 	}
 
 	@Test
-	public void loadDroneMedicationsTest()
-	{
+	public void loadDroneMedicationsTest() throws Exception {
 
+		when(this.droneDispatchService.getDrone("DRNMUS101A")).thenReturn(Optional.of(createDrone()));
+
+		String medicationDtos ="[{\"code\": \"DRG001\"}" +
+				",{\"code\": \"DRG001\"}]";
+
+		this.mockMvc.perform(post("/drone-dispatch-service/drone/load/DRNMUS101A").
+				accept(APPLICATION_JSON).
+				contentType(APPLICATION_JSON).
+				content(medicationDtos)).
+				andExpect(status().isAccepted());
 	}
+
+
 
 	@Test
 	public void getLoadedMedicationsTest()
@@ -117,6 +126,28 @@ class MusalaTaskApplicationTests {
 		droneDto.setWeightLimit(500);
 
 		return droneDto;
+	}
+
+	@Test
+	public void createMedicationTest() throws Exception {
+
+		String medication = "{ \"name\": \"DOSTINEX cabergoline\",\"weight\": 19.0,\"code\": \"DRG021\",\"imageUrl\": \"https://4.imimg.com/data4/AQ/WT/MY-7047793/dostinex-250x250.jpg\"}";
+		MedicationDto medicationDto = createMedicationDto();
+		when(this.droneDispatchService.createMedication(medicationDto)).thenReturn(medicationDto);
+
+		this.mockMvc.perform(post("/medication/create").content(medication).
+				contentType(APPLICATION_JSON).
+				accept(APPLICATION_JSON)).andExpect(status().isCreated());
+	}
+	private MedicationDto createMedicationDto() {
+		MedicationDto medicationDto = new MedicationDto();
+		medicationDto.setName("Panadol Paracetamol");
+		medicationDto.setImageURL("https://4.imimg.com/data4/AQ/WT/MY-7047793/dostinex-250x250.jpg");
+		medicationDto.setCode("DRG0024");
+		medicationDto.setWeight(120d);
+		medicationDto.setId(1);
+
+		return 	medicationDto;
 	}
 	@BeforeEach( )
 	public void  setUp()

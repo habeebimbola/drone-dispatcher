@@ -16,11 +16,21 @@ public class DroneMedication {
 
     @MapsId("droneId")
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "DRONE_ID")
     private Drone drone;
 
     @MapsId("medicationId")
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "MEDICATION_ID")
     private Medication medication;
+
+    public DroneMedication() {}
+
+    public DroneMedication( Drone drone, Medication medication) {
+        this.droneMedicationId = new DroneMedicationId(drone.getId(), medication.getId());
+        this.drone = drone;
+        this.medication = medication;
+    }
 
     public LocalDateTime getCreationDate() {
         return creationDate;

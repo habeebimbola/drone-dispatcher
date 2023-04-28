@@ -1,8 +1,7 @@
 package com.musala.rest;
 
 import com.musala.domain.Drone;
-import com.musala.domain.dto.DroneDto;
-import com.musala.domain.dto.MedicationDto;
+import com.musala.domain.dto.*;
 import com.musala.service.DroneDispatchService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -18,13 +17,13 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("drone-dispatch-service")
-public class DispatchRestController {
+public class DroneDispatchRestController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DispatchRestController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DroneDispatchRestController.class);
 
     private final DroneDispatchService droneDispatchService;
 
-    public DispatchRestController(@Qualifier("droneDispatchServiceImpl") DroneDispatchService droneDispatchService) {
+    public DroneDispatchRestController(@Qualifier("droneDispatchServiceImpl") DroneDispatchService droneDispatchService) {
         this.droneDispatchService = droneDispatchService;
     }
 
@@ -37,33 +36,46 @@ public class DispatchRestController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<DroneDto> registerDrone(@Valid() @RequestBody() DroneDto droneDto, BindingResult bindingResult)
+    public ResponseEntity<ApiResponse> registerDrone(@Valid() @RequestBody() DroneDto droneDto, BindingResult bindingResult)
     {
-        LOGGER.info("Invoking /register Handler "+droneDto.toString());
-
+        ApiResponse apiResponse = new ApiResponse();
         if(bindingResult.hasErrors())
         {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            apiResponse.setCode(ResponseCode.FAILURE);
+            apiResponse.setMessage("Invalid Fields Present while setting up Drone");
+            return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
         }
 
+
         DroneDto createdDrone = this.droneDispatchService.registerDrone(droneDto);
-        ResponseEntity<DroneDto> responseEntity = new ResponseEntity<>(createdDrone, HttpStatus.CREATED);
+
+        apiResponse.setCode(ResponseCode.SUCCESS);
+        apiResponse.setMessage(createdDrone.getSerialNo()+" Successfully Registered.");
+
+        ResponseEntity<ApiResponse> responseEntity = new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
 
         return responseEntity;
     }
 
     @PostMapping("/drone/load/{serialNo}")
-    public ResponseEntity<?> loadDroneWithMedications(@PathVariable("serialNo") String serialNo , @RequestBody() List<MedicationDto> medicationDtos)
+    public ResponseEntity<ApiResponse> loadDroneWithMedications(@PathVariable("serialNo") String serialNo , @RequestBody() List<ApiRequest> medicationCodes)
     {
         Optional<Drone> droneOptional = this.droneDispatchService.getDrone(serialNo);
+        ApiResponse apiResponse = new ApiResponse();
+
         if (!droneOptional.isPresent())
         {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            apiResponse.setMessage("Drone With Serial Number "+serialNo+" Not Found");
+            apiResponse.setCode(ResponseCode.NOT_FOUND);
+            return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
         }
 
-        this.droneDispatchService.setDroneMedications(medicationDtos, serialNo);
+        this.droneDispatchService.setDroneMedications(medicationCodes, serialNo);
 
-        ResponseEntity<?> dtoResponseEntity = new ResponseEntity(HttpStatus.ACCEPTED);
+        apiResponse.setMessage("Successfully Loaded Drone :"+serialNo+" With Medications.");
+        apiResponse.setCode(ResponseCode.SUCCESS);
+
+        ResponseEntity<ApiResponse> dtoResponseEntity = new ResponseEntity(apiResponse, HttpStatus.ACCEPTED);
         return dtoResponseEntity;
     }
 
@@ -84,10 +96,16 @@ public class DispatchRestController {
     }
 
     @GetMapping("/drone/{serialNo}/battery-level")
-    public ResponseEntity<Double> getBatteryLevel(@PathVariable("serialNo") String serialNo)
+    public ResponseEntity<DroneBatteryResponse> getDroneBatteryLevel(@PathVariable("serialNo") String serialNo)
     {
         Double batteryLevel = this.droneDispatchService.getDroneBatteryLevel(serialNo);
-        ResponseEntity<Double> responseEntity = new ResponseEntity(batteryLevel, HttpStatus.OK);
+
+        DroneBatteryResponse droneBatteryResponse = new DroneBatteryResponse();
+        droneBatteryResponse.setBatteryLevel(batteryLevel);
+        droneBatteryResponse.setSerialNo(serialNo);
+        droneBatteryResponse.setCode(ResponseCode.SUCCESS);
+        ResponseEntity<DroneBatteryResponse> responseEntity = new ResponseEntity(droneBatteryResponse, HttpStatus.OK);
+
         return responseEntity;
     }
 

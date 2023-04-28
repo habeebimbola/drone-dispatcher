@@ -3,10 +3,11 @@ package com.musala.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
-public class DroneMedicationId {
+public class DroneMedicationId implements Serializable {
 
     @Column(name = "DRONE_ID")
     private Integer droneId;
@@ -26,6 +27,14 @@ public class DroneMedicationId {
     }
 
     public void setMedicationId(Integer medicationId) {
+        this.medicationId = medicationId;
+    }
+
+    public DroneMedicationId() {
+    }
+
+    public DroneMedicationId(Integer droneId, Integer medicationId) {
+        this.droneId = droneId;
         this.medicationId = medicationId;
     }
 
