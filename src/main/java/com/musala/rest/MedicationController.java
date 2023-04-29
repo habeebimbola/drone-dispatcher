@@ -5,8 +5,9 @@ import com.musala.domain.dto.MedicationDto;
 import com.musala.domain.dto.ResponseCode;
 import com.musala.service.DroneDispatchService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -18,6 +19,7 @@ import java.util.List;
 @RequestMapping("medication")
 public class MedicationController {
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(MedicationController.class);
     @Autowired()
     private DroneDispatchService droneDispatchService;
 
@@ -28,6 +30,7 @@ public class MedicationController {
 
         if( bindingResult.hasErrors())
         {
+            bindingResult.getAllErrors().stream().forEach(System.out::println);
             apiResponse.setCode(ResponseCode.FAILURE);
             apiResponse.setMessage("Could Not Create Medication,");
             return ResponseEntity.badRequest().body(apiResponse);

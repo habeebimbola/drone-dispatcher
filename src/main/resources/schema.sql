@@ -10,9 +10,10 @@ CREATE TABLE DRONE( ID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
                        STATE SMALLINT NOT NULL
                        );
 CREATE TABLE MEDICATION(ID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                        NAME VARCHAR(300) NOT NULL,
+                        NAME VARCHAR(300) NOT NULL UNIQUE,
                         WEIGHT DECIMAL NOT NULL,
-                        CODE VARCHAR(200) NOT NULL
+                        CODE VARCHAR(200) NOT NULL UNIQUE,
+                        IMAGE_URL varchar(max) NOT NULL
                         );
 
 CREATE TABLE DRONE_MEDICATION(
