@@ -1,5 +1,6 @@
 package com.musala;
 
+import com.musala.domain.Drone;
 import com.musala.domain.DroneModel;
 import com.musala.domain.DroneState;
 import com.musala.domain.dto.DroneDto;
@@ -42,7 +43,7 @@ class DroneDispatcherApplicationTests {
 
 		String newDrone = "{\"serialNo\":\"DRNMUS101A\",\"droneModel\":\"LightWeight\", \"droneState\":\"IDLE\", \"weightLimit\":500, \"batteryCapacity\":10 }";
 
-		DroneDto droneDto = createDrone();
+		DroneDto droneDto = createDummyDrone();
 		when(this.droneDispatchService.registerDrone(droneDto)).thenReturn(droneDto);
 
 		this.mockMvc.perform(post("/drone-dispatch-service/register").
@@ -54,13 +55,13 @@ class DroneDispatcherApplicationTests {
 
 	@Test
 	public void loadDroneMedicationsTest() throws Exception {
-
-		when(this.droneDispatchService.getDrone("DRNMUS101A")).thenReturn(Optional.of(createDrone()));
+		Drone drone = new Drone(); drone.setSerialNo("");drone.setWeightLimit(24d); drone.setDroneState(DroneState.DELIVERED);
+		when(this.droneDispatchService.getDrone("DRNMUS101A")).thenReturn(Optional.ofNullable(drone));
 
 		String medicationDtos ="[{\"code\": \"DRG001\"}" +
 				",{\"code\": \"DRG001\"}]";
 
-		this.mockMvc.perform(post("/drone-dispatch-service/drone/load/DRNMUS101A").
+		this.mockMvc.perform(patch("/drone-dispatch-service/drone/load/DRNMUS101A").
 				accept(APPLICATION_JSON).
 				contentType(APPLICATION_JSON).
 				content(medicationDtos)).
@@ -70,9 +71,29 @@ class DroneDispatcherApplicationTests {
 
 
 	@Test
-	public void getLoadedMedicationsTest()
-	{
+	public void getLoadedMedicationsTest() throws Exception {
+		MedicationDto medicationDto = new MedicationDto();
+		medicationDto.setName("Panadol Paracetamol");
+		medicationDto.setImageURL("https://4.imimg.com/data4/AQ/WT/MY-7047793/dostinex-250x250.jpg");
+		medicationDto.setCode("DRG0024");
+		medicationDto.setWeight(120d);
+		medicationDto.setId(1);
 
+		MedicationDto medicationDto2 = new MedicationDto();
+		medicationDto2.setName("Aspirin");
+		medicationDto2.setImageURL("https://4.imimg.com/data4/AQ/WT/MY-7047793/dostinex-250x250.jpg");
+		medicationDto2.setCode("DRG0025");
+		medicationDto2.setWeight(100d);
+		medicationDto2.setId(2);
+
+		List<MedicationDto> medicationDtos = new ArrayList<>(); medicationDtos.add(medicationDto); medicationDtos.add(medicationDto2);
+
+		when(this.droneDispatchService.getLoadedDroneMedications("DRNMUS101B")).thenReturn(medicationDtos);
+
+		this.mockMvc.perform(get("/drone-dispatch-service/drone/medications/DRNMUS101B").
+				accept(APPLICATION_JSON).
+				contentType(APPLICATION_JSON)).
+				andExpect(status().isOk());
 	}
 
 	@Test
@@ -82,7 +103,7 @@ class DroneDispatcherApplicationTests {
 		droneDto1 = new DroneDto();
 		droneDto1.setId(1);
 		droneDto1.setDroneState(DroneState.IDLE);
-		droneDto1.setWeightLimit(200);
+		droneDto1.setWeightLimit(200d);
 		droneDto1.setDroneModel(DroneModel.LightWeight);
 		droneDto1.setSerialNo("DRNMUS101A");
 
@@ -91,7 +112,7 @@ class DroneDispatcherApplicationTests {
 		droneDto2.setDroneModel(DroneModel.CruiserWeight);
 		droneDto2.setDroneState(DroneState.IDLE);
 		droneDto2.setBatteryCapacity(400d);
-		droneDto2.setWeightLimit(20);
+		droneDto2.setWeightLimit(20d);
 		droneDto2.setId(2);
 
 		List<DroneDto> droneDtoList = new ArrayList<>(); droneDtoList.add(droneDto1); droneDtoList.add(droneDto2);
@@ -116,14 +137,15 @@ class DroneDispatcherApplicationTests {
 				.andExpect(status().isOk());
 	}
 
-	private DroneDto createDrone()
+	private DroneDto createDummyDrone()
 	{
 		DroneDto droneDto = new DroneDto();
 		droneDto.setDroneModel(DroneModel.LightWeight);
 		droneDto.setDroneState(DroneState.IDLE);
 		droneDto.setBatteryCapacity(10.0);
 		droneDto.setSerialNo("DRNMUS101A");
-		droneDto.setWeightLimit(500);
+		droneDto.setWeightLimit(500d);
+		droneDto.setId(1);
 
 		return droneDto;
 	}
@@ -131,7 +153,7 @@ class DroneDispatcherApplicationTests {
 	@Test
 	public void createMedicationTest() throws Exception {
 
-		String medication = "{ \"name\": \"DOSTINEX cabergoline\",\"weight\": 19.0,\"code\": \"DRG021\",\"imageUrl\": \"https://4.imimg.com/data4/AQ/WT/MY-7047793/dostinex-250x250.jpg\"}";
+		String medication = "{ \"name\": \"DOSTINEXcabergoline_\",\"weight\": 19.0,\"code\": \"DRG021\",\"imageUrl\": \"https://4.imimg.com/data4/AQ/WT/MY-7047793/dostinex-250x250.jpg\"}";
 		MedicationDto medicationDto = createMedicationDto();
 		when(this.droneDispatchService.createMedication(medicationDto)).thenReturn(medicationDto);
 

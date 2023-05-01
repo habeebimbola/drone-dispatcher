@@ -26,8 +26,7 @@ public class Drone implements Serializable {
     private DroneModel droneModel;
 
     @Column(name = "WEIGHT_LIMIT", nullable = false)
-    @Max(value = 500, message = "Weight Limit of 500 Exceeded. Please Adjust Weight")
-    private Integer weightLimit;
+    private Double weightLimit;
 
     @Column(name = "BATTERY_CAPACITY", nullable = false)
     private Double batteryCapacity;
@@ -63,11 +62,11 @@ public class Drone implements Serializable {
         this.droneModel = droneModel;
     }
 
-    public Integer getWeightLimit() {
+    public Double getWeightLimit() {
         return weightLimit;
     }
 
-    public void setWeightLimit(Integer weightLimit) {
+    public void setWeightLimit(Double weightLimit) {
         this.weightLimit = weightLimit;
     }
 

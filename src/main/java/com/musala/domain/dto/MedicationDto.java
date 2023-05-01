@@ -17,21 +17,22 @@ public class MedicationDto {
     private Integer id;
 
     @JsonProperty("name")
-    @Pattern(regexp = "[A-Za-z0-9]+_*-*",message = "Allowed Only Letters, Underscores and Numbers")
+    @Pattern(regexp = "[A-Za-z0-9]+_*-*",message = "Medication Name Is Invalid. Allowed Only Letters, Underscores and Numbers")
     private String name;
 
     @JsonProperty("weight")
     @Positive(message = "Weight Must Be Positive Values Only.")
     private Double weight;
 
-    @NotNull
+    @NotEmpty(message = "Medication Code Cannot Be Empty.")
+    @NotNull(message = "Medication Code Cannot Be Null.")
     @JsonProperty("code")
-    @Pattern(regexp = "[A-Z_0-9]+-*", message = "Allowed Only Uppercase Letters, Underscore, And Numbers.")
+    @Pattern(regexp = "[A-Z_0-9]+-*", message = "Medication Code Is Invalid. Allowed Only Uppercase Letters, Underscore, And Numbers.")
     private String code;
 
     @JsonProperty("imageUrl")
-    @URL
-    @NotNull
+    @URL(message = "Medication Image Url Must Be Valid URL.")
+    @NotNull(message = "Medication Image Url Cannot Be Null")
     private String imageURL;
 
     public String getName() {

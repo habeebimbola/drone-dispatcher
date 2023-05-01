@@ -3,6 +3,8 @@ package com.musala.rest;
 import com.musala.domain.Drone;
 import com.musala.domain.dto.*;
 import com.musala.service.DroneDispatchService;
+import com.musala.validation.DroneValidationError;
+import com.musala.validation.DroneValidationErrorBuilder;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +13,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,29 +43,24 @@ public class DroneDispatchRestController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse> registerDrone(@Valid() @RequestBody() DroneDto droneDto, BindingResult bindingResult)
-    {
+    public ResponseEntity<?> registerDrone(@Valid() @RequestBody() DroneDto droneDto, BindingResult bindingResult) {
         ApiResponse apiResponse = new ApiResponse();
+
         if(bindingResult.hasErrors())
         {
-            apiResponse.setCode(ResponseCode.FAILURE);
-            apiResponse.setMessage("Invalid Fields Present while setting up Drone");
-            return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(DroneValidationErrorBuilder.fromBindingErrors(bindingResult));
         }
 
-
         DroneDto createdDrone = this.droneDispatchService.registerDrone(droneDto);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{serialNo}"). buildAndExpand(createdDrone.getSerialNo()).toUri();
 
-        apiResponse.setCode(ResponseCode.SUCCESS);
-        apiResponse.setMessage(createdDrone.getSerialNo()+" Successfully Registered.");
+         ResponseEntity.created(location).build();;
 
-        ResponseEntity<ApiResponse> responseEntity = new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
-
-        return responseEntity;
+        return ResponseEntity.created(location).build();
     }
 
-    @PostMapping("/drone/load/{serialNo}")
-    public ResponseEntity<ApiResponse> loadDroneWithMedications(@PathVariable("serialNo") String serialNo , @RequestBody() List<ApiRequest> medicationCodes)
+    @PatchMapping("/drone/load/{serialNo}")
+    public ResponseEntity<?> loadDroneWithMedications(@PathVariable("serialNo") String serialNo , @RequestBody() List<ApiRequest> medicationCodes)
     {
         Optional<Drone> droneOptional = this.droneDispatchService.getDrone(serialNo);
         ApiResponse apiResponse = new ApiResponse();
@@ -71,17 +73,26 @@ public class DroneDispatchRestController {
         }
 
         this.droneDispatchService.setDroneMedications(medicationCodes, serialNo);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().buildAndExpand(serialNo).toUri();
 
-        apiResponse.setMessage("Successfully Loaded Drone :"+serialNo+" With Medications.");
-        apiResponse.setCode(ResponseCode.SUCCESS);
+        return ResponseEntity.accepted().header("Location", location.toString()).build();
 
-        ResponseEntity<ApiResponse> dtoResponseEntity = new ResponseEntity(apiResponse, HttpStatus.ACCEPTED);
-        return dtoResponseEntity;
+//        apiResponse.setMessage("Successfully Loaded Drone :"+serialNo+" With Medications.");
+//        apiResponse.setCode(ResponseCode.SUCCESS);
+//
+//        ResponseEntity<ApiResponse> dtoResponseEntity = new ResponseEntity(apiResponse, HttpStatus.ACCEPTED);
+//        return dtoResponseEntity;
     }
 
     @GetMapping("/drone/medications/{serialNo}")
     public ResponseEntity<List<MedicationDto>> getLoadedMedications(@PathVariable("serialNo") String serialNo){
 
+        Optional<Drone> droneOptional = this.droneDispatchService.getDrone(serialNo);
+
+        if(!droneOptional.isPresent())
+        {
+            return ResponseEntity.notFound().build();
+        }
         List<MedicationDto> medicationDtoList = this.droneDispatchService.getLoadedDroneMedications(serialNo);
 
         ResponseEntity<List<MedicationDto>> responseEntity = new ResponseEntity( medicationDtoList,HttpStatus.OK);
@@ -98,6 +109,13 @@ public class DroneDispatchRestController {
     @GetMapping("/drone/{serialNo}/battery-level")
     public ResponseEntity<DroneBatteryResponse> getDroneBatteryLevel(@PathVariable("serialNo") String serialNo)
     {
+       Optional<Drone> droneOptional= this.droneDispatchService.getDrone(serialNo);
+
+       if(!droneOptional.isPresent())
+       {
+           return ResponseEntity.notFound().build();
+       }
+
         Double batteryLevel = this.droneDispatchService.getDroneBatteryLevel(serialNo);
 
         DroneBatteryResponse droneBatteryResponse = new DroneBatteryResponse();
@@ -107,6 +125,13 @@ public class DroneDispatchRestController {
         ResponseEntity<DroneBatteryResponse> responseEntity = new ResponseEntity(droneBatteryResponse, HttpStatus.OK);
 
         return responseEntity;
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public DroneValidationError handleException(Exception exception)
+    {
+        return new DroneValidationError(exception.getMessage());
     }
 
 }

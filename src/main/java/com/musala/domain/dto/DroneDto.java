@@ -3,23 +3,22 @@ package com.musala.domain.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.musala.domain.Drone;
 import com.musala.domain.DroneModel;
 import com.musala.domain.DroneState;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 @JsonSerialize
-public class DroneDto extends Drone {
+public class DroneDto  {
 
     @JsonIgnore
     private Integer id;
 
-    @Size(max = 100, message = "Invalid Serial Number Length. Must Be Less Than 100", min = 10)
+    @Size(max = 100, message = "Invalid Serial Number Length. Must Be At Least 10 Characters And Greater 100", min = 10)
     @JsonProperty("serialNo")
     private String serialNo;
 
+
+    @NotNull(message = "Drone Model is Null. Please Fill In A Value")
     @JsonProperty("droneModel")
     private DroneModel droneModel;
 
@@ -34,15 +33,51 @@ public class DroneDto extends Drone {
     @JsonProperty("droneState")
     private DroneState droneState;
 
+    public Integer getId() {
+        return id;
+    }
 
-    @Override
-    public String toString() {
-        return "DroneDto{" +
-                "serialNo='" +getSerialNo()  + '\'' +
-                ", droneModel=" + getDroneModel() +
-                ", weightLimit=" + getWeightLimit() +
-                ", batteryCapacity=" + getBatteryCapacity() +
-                ", droneState=" + getDroneState() +
-                '}';
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getSerialNo() {
+        return serialNo;
+    }
+
+    public void setSerialNo(String serialNo) {
+        this.serialNo = serialNo;
+    }
+
+    public DroneModel getDroneModel() {
+        return droneModel;
+    }
+
+    public void setDroneModel(DroneModel droneModel) {
+        this.droneModel = droneModel;
+    }
+
+    public Double getWeightLimit() {
+        return weightLimit;
+    }
+
+    public void setWeightLimit(Double weightLimit) {
+        this.weightLimit = weightLimit;
+    }
+
+    public Double getBatteryCapacity() {
+        return batteryCapacity;
+    }
+
+    public void setBatteryCapacity(Double batteryCapacity) {
+        this.batteryCapacity = batteryCapacity;
+    }
+
+    public DroneState getDroneState() {
+        return droneState;
+    }
+
+    public void setDroneState(DroneState droneState) {
+        this.droneState = droneState;
     }
 }
