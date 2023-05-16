@@ -44,8 +44,6 @@ public class DroneDispatchRestController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerDrone(@Valid() @RequestBody() DroneDto droneDto, BindingResult bindingResult) {
-        ApiResponse apiResponse = new ApiResponse();
-
         if(bindingResult.hasErrors())
         {
             return ResponseEntity.badRequest().body(DroneValidationErrorBuilder.fromBindingErrors(bindingResult));

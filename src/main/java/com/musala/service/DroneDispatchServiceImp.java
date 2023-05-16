@@ -10,6 +10,7 @@ import com.musala.repo.DroneRepository;
 import com.musala.repo.MedicationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -164,5 +165,11 @@ public class DroneDispatchServiceImp implements DroneDispatchService{
         Optional<Drone> droneOptional = this.droneRepository.findBySerialNo(serialNo);
 
         return droneOptional.isPresent()? true : false;
+    }
+
+    @Scheduled(fixedRate = 10000)
+    public void checkDroneBatterLevels()
+    {
+        LOGGER.info("Checking Drone Battery Level:");
     }
 }
