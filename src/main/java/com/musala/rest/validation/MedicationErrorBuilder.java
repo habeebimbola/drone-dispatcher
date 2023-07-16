@@ -1,4 +1,4 @@
-package com.musala.validation;
+package com.musala.rest.validation;
 
 import org.springframework.validation.Errors;
 

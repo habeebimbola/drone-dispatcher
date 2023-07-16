@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MusalaTaskApplication {
+public class DroneDispatcherTaskApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MusalaTaskApplication.class, args);
+		SpringApplication.run(DroneDispatcherTaskApplication.class, args);
 	}
 
 }

@@ -3,8 +3,8 @@ package com.musala.rest;
 import com.musala.domain.Drone;
 import com.musala.domain.dto.*;
 import com.musala.service.DroneDispatchService;
-import com.musala.validation.DroneValidationError;
-import com.musala.validation.DroneValidationErrorBuilder;
+import com.musala.rest.validation.DroneValidationError;
+import com.musala.rest.validation.DroneValidationErrorBuilder;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,7 +64,9 @@ public class DroneDispatchRestController {
         {
             apiResponse.setMessage("Drone With Serial Number "+serialNo+" Not Found");
             apiResponse.setCode(ResponseCode.NOT_FOUND);
-            return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
+
+            return ResponseEntity.notFound().build();
+//            return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
         }
 
         this.droneDispatchService.setDroneMedications(medicationCodes, serialNo);
@@ -75,11 +74,6 @@ public class DroneDispatchRestController {
 
         return ResponseEntity.accepted().header("Location", location.toString()).build();
 
-//        apiResponse.setMessage("Successfully Loaded Drone :"+serialNo+" With Medications.");
-//        apiResponse.setCode(ResponseCode.SUCCESS);
-//
-//        ResponseEntity<ApiResponse> dtoResponseEntity = new ResponseEntity(apiResponse, HttpStatus.ACCEPTED);
-//        return dtoResponseEntity;
     }
 
     @GetMapping("/drone/medications/{serialNo}")

@@ -1,25 +1,25 @@
-package com.musala.validation;
+package com.musala.rest.validation;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class DroneValidationError {
+public class MedicationValidationError {
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private List<String> errors  = new ArrayList<>();
+    private List<String> errors = new ArrayList<>();
 
     private final String errorMessage;
 
-    public DroneValidationError(String errorMessage) {
+    public MedicationValidationError(String errorMessage) {
         this.errorMessage = errorMessage;
     }
 
-    public void addError(String error)
+    public void addError(String errorMessage)
     {
-        errors.add(error);
+        errors.add(errorMessage);
     }
+
     public List<String> getErrors() {
         return errors;
     }

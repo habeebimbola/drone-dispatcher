@@ -1,14 +1,10 @@
 package com.musala.rest;
 
-import com.musala.domain.dto.ApiResponse;
 import com.musala.domain.dto.MedicationDto;
-import com.musala.domain.dto.ResponseCode;
 import com.musala.service.DroneDispatchService;
-import com.musala.validation.MedicationErrorBuilder;
-import com.musala.validation.MedicationValidationError;
+import com.musala.rest.validation.MedicationErrorBuilder;
+import com.musala.rest.validation.MedicationValidationError;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
