@@ -49,7 +49,7 @@ public class DroneDispatchRestController {
         DroneDto createdDrone = this.droneDispatchService.registerDrone(droneDto);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{serialNo}"). buildAndExpand(createdDrone.getSerialNo()).toUri();
 
-         ResponseEntity.created(location).build();;
+         ResponseEntity.created(location).build();
 
         return ResponseEntity.created(location).build();
     }
