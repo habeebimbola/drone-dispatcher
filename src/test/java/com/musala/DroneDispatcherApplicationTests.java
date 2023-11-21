@@ -8,6 +8,7 @@ import com.musala.domain.dto.MedicationDto;
 import com.musala.service.DroneDispatchService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -34,9 +35,8 @@ class DroneDispatcherApplicationTests {
 	@Autowired
 	private MockMvc mockMvc;
 
-	@MockBean
+	@Mock
 	private DroneDispatchService droneDispatchService;
-
 
 	@Test
 	public void registerDroneTest() throws Exception {
@@ -55,8 +55,9 @@ class DroneDispatcherApplicationTests {
 
 	@Test
 	public void loadDroneMedicationsTest() throws Exception {
-		Drone drone = new Drone(); drone.setSerialNo("");drone.setWeightLimit(24d); drone.setDroneState(DroneState.DELIVERED);
-		when(this.droneDispatchService.getDrone("DRNMUS101A")).thenReturn(Optional.ofNullable(drone));
+		Drone drone = new Drone(); drone.setSerialNo("DRNMUS101A");drone.setWeightLimit(24d); drone.setDroneState(DroneState.DELIVERED);
+		Optional<Drone> droneOptional = Optional.ofNullable(drone);
+		when(this.droneDispatchService.getDrone("DRNMUS101A")).thenReturn(droneOptional);
 
 		String medicationDtos ="[{\"code\": \"DRG001\"}" +
 				",{\"code\": \"DRG001\"}]";

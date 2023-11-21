@@ -56,7 +56,7 @@ public class DroneDispatchServiceImp implements DroneDispatchService{
     public void setDroneMedications(List<ApiRequest> medications, String serialNo)
     {
         Optional<Drone> droneOptional = this.getDrone(serialNo);
-        Drone drone = droneOptional.isPresent()? droneOptional.get() : droneOptional.orElseThrow(() -> new RuntimeException("Drone Specified Not Found"));
+        Drone drone = droneOptional.isPresent() ? droneOptional.get() : droneOptional.orElseThrow(() -> new RuntimeException("Drone Specified Not Found"));
 
         List<Medication> medicationList = medications.stream().map((medicationDto) -> getMedicationByCode(medicationDto.getMedicationCode())
 

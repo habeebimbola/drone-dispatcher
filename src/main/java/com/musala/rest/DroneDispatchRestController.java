@@ -65,8 +65,7 @@ public class DroneDispatchRestController {
             apiResponse.setMessage("Drone With Serial Number "+serialNo+" Not Found");
             apiResponse.setCode(ResponseCode.NOT_FOUND);
 
-            return ResponseEntity.notFound().build();
-//            return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiResponse);
         }
 
         this.droneDispatchService.setDroneMedications(medicationCodes, serialNo);
@@ -101,7 +100,7 @@ public class DroneDispatchRestController {
     @GetMapping("/drone/{serialNo}/battery-level")
     public ResponseEntity<DroneBatteryResponse> getDroneBatteryLevel(@PathVariable("serialNo") String serialNo)
     {
-       Optional<Drone> droneOptional= this.droneDispatchService.getDrone(serialNo);
+       Optional<Drone> droneOptional = this.droneDispatchService.getDrone(serialNo);
 
        if(!droneOptional.isPresent())
        {
