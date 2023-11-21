@@ -1,0 +1,21 @@
+version:1.0
+services:
+  drone-dispatcher:
+    build:
+      context: .
+    ports:
+      -9000:9000
+    environment:
+      HOST_DB:
+        DB_USER:
+          DB_PASSWORD:
+    depends_on:
+              db
+
+   db:
+     image: mysql:8.0
+     ports:
+       -3306:3306
+     environment:
+       MYSQL_ROOT_PASSWORD:
+
