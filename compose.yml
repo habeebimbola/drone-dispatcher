@@ -9,7 +9,7 @@ services:
     depends_on:
       - db
     environment:
-      - spring.datasource.url=jdbc:mysql://db/musala-task?serverTimezone=UTC
+      - spring.datasource.url=jdbc:mysql://db:3306/musala-task?serverTimezone=UTC
       - MYSQL_USER=musala-test
       - MYSQL_PASSWORD=musala-test
   db:
@@ -18,7 +18,7 @@ services:
        - "3306:3306"
      environment:
          - MYSQL_DATABASE=musala-task
-         - MYSQL_USERNAME=musala-test
+         - MYSQL_USER=musala-test
          - MYSQL_PASSWORD=musala-test
          - MYSQL_ROOT_PASSWORD=Abimbola1981&
          - MYSQL_ALLOW_EMPTY_PASSWORD=true
