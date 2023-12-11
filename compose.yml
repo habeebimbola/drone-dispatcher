@@ -1,22 +1,25 @@
-version: 1.0
+version: "3.5"
 
 services:
   drone-dispatcher:
     build:
       context: .
     ports:
-      -9000:9000
-    environment:
-      HOST_DB:
-        DB_USER:
-          DB_PASSWORD:
+      - "8000:8000"
     depends_on:
-              db
-
-   db:
+      - db
+    environment:
+      - spring.datasource.url=jdbc:mysql://db/musala-task?serverTimezone=UTC
+      - MYSQL_USER=musala-test
+      - MYSQL_PASSWORD=musala-test
+  db:
      image: mysql:8.0
      ports:
-       -3306:3306
+       - "3306:3306"
      environment:
-       MYSQL_ROOT_PASSWORD:
+         - MYSQL_DATABASE=musala-task
+         - MYSQL_USERNAME=musala-test
+         - MYSQL_PASSWORD=musala-test
+         - MYSQL_ROOT_PASSWORD=Abimbola1981&
+         - MYSQL_ALLOW_EMPTY_PASSWORD=true
 
